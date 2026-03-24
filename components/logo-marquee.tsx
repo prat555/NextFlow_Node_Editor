@@ -35,7 +35,7 @@ export function LogoMarquee() {
                   alt={`${company.name} logo`}
                   width={24}
                   height={24}
-                  className="opacity-60"
+                  className="opacity-60 grayscale w-auto h-auto"
                   unoptimized
                 />
                 {company.abbr}
@@ -48,13 +48,13 @@ export function LogoMarquee() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Button
             size="lg"
-            className="bg-white text-black border border-gray-300 hover:bg-gray-50 px-8 rounded-none"
+            className="bg-white text-black hover:bg-gray-50 px-8 rounded-none border-0 shadow-none"
           >
             Sign up for free
           </Button>
           <Button
             size="lg"
-            className="bg-black text-white hover:bg-gray-900 px-8 rounded-none"
+            className="bg-black text-white hover:bg-gray-900 px-8 rounded-md"
           >
             Contact Sales
           </Button>
