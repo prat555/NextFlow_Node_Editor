@@ -49,7 +49,7 @@ export function ModelShowcase() {
       <div className="max-w-7xl mx-auto text-center">
         {/* Heading */}
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          {"The industry's best "}
+          The industry&apos;s best{" "}
           <span
             className={`inline-block transition-all duration-500 ease-out ${
               isMounted && isAnimating 
@@ -59,7 +59,7 @@ export function ModelShowcase() {
           >
             {rotatingWords[currentWordIndex]}
           </span>
-          {" models."}
+          {" "}models.
         </h2>
         <p className="text-xl text-gray-500 mb-12">In one subscription.</p>
 
