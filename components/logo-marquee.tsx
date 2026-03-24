@@ -14,7 +14,7 @@ export function LogoMarquee() {
   return (
     <section className="py-24 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
-        <p className="text-lg text-gray-500 mb-2 text-left">
+        <p className="text-lg font-bold text-gray-500 mb-2 text-left">
           A tool suite for pros and beginners alike
         </p>
         <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-12 text-left">
