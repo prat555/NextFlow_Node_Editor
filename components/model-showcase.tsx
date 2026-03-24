@@ -49,7 +49,7 @@ export function ModelShowcase() {
       <div className="max-w-7xl mx-auto text-center">
         {/* Heading */}
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          <span>The industry&apos;s best</span>{" "}
+          {"The industry's best "}
           <span
             className={`inline-block transition-all duration-500 ease-out ${
               isMounted && isAnimating 
@@ -58,8 +58,8 @@ export function ModelShowcase() {
             }`}
           >
             {rotatingWords[currentWordIndex]}
-          </span>{" "}
-          <span>models.</span>
+          </span>
+          {" models."}
         </h2>
         <p className="text-xl text-gray-500 mb-12">In one subscription.</p>
 
@@ -154,9 +154,7 @@ export function ModelShowcase() {
           </div>
           <div className="col-span-3 md:col-span-1 bg-gray-100 rounded-3xl p-4 h-48 flex flex-col items-center justify-between py-6">
             <p className="text-lg font-semibold text-gray-900 italic">Bleeding Edge</p>
-            <div className="w-20 h-20 rounded-full border-2 border-gray-300 flex items-center justify-center">
-              <div className="w-1 h-8 bg-gray-400 origin-bottom -rotate-45"></div>
-            </div>
+            <img src="https://s.krea.ai/clock.svg" alt="Clock" className="w-20 h-20" />
             <p className="text-gray-500 text-xs text-center">Access the latest models directly on release day</p>
           </div>
           <div className="col-span-2 md:col-span-1 bg-gray-900 rounded-3xl p-4 h-48 flex flex-col justify-start relative overflow-hidden">
