@@ -1,78 +1,158 @@
 "use client"
 
-import { useState } from "react"
-import { ImageIcon, Video, Wand2, Sparkles, ArrowRight } from "lucide-react"
+import { useRef, useState } from "react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import Image from "next/image"
 
-const workflows = [
+const cards = [
   {
     id: 1,
-    title: "Generate image",
-    prompt: "Cinematic photo of a person in a linen jacket",
-    icon: ImageIcon,
-    color: "from-blue-500/20 to-cyan-500/20",
+    badge: "Krea 1",
+    badgeIcon: (
+      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+    label: "PROMPT",
+    quote: '"Cinematic photo of a person in a linen jacket"',
+    image: "https://s.krea.ai/landingPhotorealExamplePortrait.webp",
+    buttonLabel: "Generate image",
   },
   {
     id: 2,
-    title: "Generate video",
-    prompt: "An animated capybara talking about AI",
-    icon: Video,
-    color: "from-pink-500/20 to-rose-500/20",
+    badge: "Veo 3",
+    badgeIcon: (
+      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="2"/>
+        <circle cx="12" cy="12" r="4" fill="white"/>
+      </svg>
+    ),
+    label: "PROMPT",
+    quote: '"An animated capybara talking about Krea.ai"',
+    image: "https://s.krea.ai/landingCapybaraVideo.webp",
+    buttonLabel: "Generate video",
   },
   {
     id: 3,
-    title: "Upscale image",
-    prompt: "512px → 8K",
-    icon: Wand2,
-    color: "from-emerald-500/20 to-teal-500/20",
+    badge: "Topaz Upscaler",
+    badgeIcon: (
+      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z" stroke="white" strokeWidth="2" strokeLinejoin="round"/>
+      </svg>
+    ),
+    label: "PROMPT",
+    quote: "Upscale image 512px → 8K",
+    image: "https://s.krea.ai/landingUpscalerExample.webp",
+    buttonLabel: "Upscale image",
   },
   {
     id: 4,
-    title: "Animate image",
-    prompt: "Advertisement shot of a sandwich vertically exploding",
-    icon: Sparkles,
-    color: "from-amber-500/20 to-orange-500/20",
+    badge: "Hailuo",
+    badgeIcon: (
+      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="2"/>
+        <path d="M8 12a4 4 0 0 1 8 0" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+      </svg>
+    ),
+    label: "PROMPT",
+    quote: '"Advertisement shot of a sandwich exploding into layers"',
+    image: "https://s.krea.ai/landingHailuoExample.webp",
+    buttonLabel: "Generate video",
   },
 ]
 
 export function WorkflowShowcase() {
-  const [activeWorkflow, setActiveWorkflow] = useState(0)
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [hoveredId, setHoveredId] = useState<number | null>(null)
+
+  const scroll = (dir: "left" | "right") => {
+    if (!scrollRef.current) return
+    const amount = 340
+    scrollRef.current.scrollBy({ left: dir === "right" ? amount : -amount, behavior: "smooth" })
+  }
 
   return (
-    <section className="py-24 px-4 bg-white">
-      <div className="max-w-7xl mx-auto">
-        {/* Workflow cards grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {workflows.map((workflow, index) => (
+    <section className="bg-white py-16 px-4 overflow-hidden">
+      <div className="max-w-7xl mx-auto relative">
+        {/* Scrollable cards row */}
+        <div
+          ref={scrollRef}
+          className="flex gap-4 overflow-x-auto scrollbar-hide pb-4 scroll-smooth"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          {cards.map((card) => (
             <div
-              key={workflow.id}
-              onMouseEnter={() => setActiveWorkflow(index)}
-              className={`group relative p-6 rounded-2xl border transition-all duration-300 cursor-pointer ${
-                activeWorkflow === index
-                  ? "border-gray-300 bg-gray-50"
-                  : "border-gray-200 hover:border-gray-300 bg-white"
-              }`}
+              key={card.id}
+              className="relative flex-shrink-0 w-72 rounded-2xl overflow-hidden cursor-pointer group"
+              style={{ aspectRatio: "9/13" }}
+              onMouseEnter={() => setHoveredId(card.id)}
+              onMouseLeave={() => setHoveredId(null)}
             >
-              <div
-                className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${workflow.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+              {/* Background image */}
+              <Image
+                src={card.image}
+                alt={card.quote}
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                sizes="288px"
               />
-              <div className="relative z-10">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
-                    <workflow.icon className="w-5 h-5 text-gray-900" />
-                  </div>
-                  <span className="text-sm font-medium text-gray-900">{workflow.title}</span>
+
+              {/* Dark gradient overlay at bottom */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+              {/* Badge top-left */}
+              <div className="absolute top-4 left-4 flex items-center gap-1.5 bg-black/40 backdrop-blur-sm rounded-full px-3 py-1.5">
+                {card.badgeIcon}
+                <span className="text-white text-sm font-medium">{card.badge}</span>
+              </div>
+
+              {/* Bottom content */}
+              <div className="absolute bottom-0 left-0 right-0 p-5 flex flex-col gap-3">
+                <div
+                  className="transition-transform duration-300"
+                  style={{
+                    transform: hoveredId === card.id ? "translateY(-8px)" : "translateY(0)",
+                  }}
+                >
+                  <p className="text-[11px] font-semibold tracking-widest text-white/60 uppercase mb-1">
+                    {card.label}
+                  </p>
+                  <p className="text-white font-bold text-lg leading-snug">{card.quote}</p>
                 </div>
-                <div className="bg-gray-100 rounded-lg p-3">
-                  <p className="text-xs text-gray-500 font-mono">Prompt</p>
-                  <p className="text-sm text-gray-900 mt-1 line-clamp-2">{`"${workflow.prompt}"`}</p>
-                </div>
-                <div className="mt-4 flex items-center text-xs text-gray-500 group-hover:text-gray-900 transition-colors">
-                  <span>Try it</span>
-                  <ArrowRight className="ml-1 w-3 h-3 group-hover:translate-x-1 transition-transform" />
+
+                {/* Generate button — appears on hover */}
+                <div
+                  className="transition-all duration-300 overflow-hidden"
+                  style={{
+                    maxHeight: hoveredId === card.id ? "48px" : "0px",
+                    opacity: hoveredId === card.id ? 1 : 0,
+                  }}
+                >
+                  <button className="bg-[#1a1a1a] hover:bg-[#2a2a2a] text-white text-sm font-medium px-4 py-2.5 rounded-full transition-colors whitespace-nowrap">
+                    {card.buttonLabel}
+                  </button>
                 </div>
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Nav arrows */}
+        <div className="flex justify-end gap-2 mt-4">
+          <button
+            onClick={() => scroll("left")}
+            className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors"
+            aria-label="Previous"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <button
+            onClick={() => scroll("right")}
+            className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors"
+            aria-label="Next"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
         </div>
       </div>
     </section>
