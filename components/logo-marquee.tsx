@@ -22,7 +22,7 @@ export function LogoMarquee() {
   }, [])
 
   return (
-    <section className="pt-24 pb-16 px-4 bg-white">
+    <section className="py-24 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
         <p className="text-lg font-bold text-gray-500 mb-2 text-left">
           A tool suite for pros and beginners alike

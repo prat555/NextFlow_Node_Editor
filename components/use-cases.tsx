@@ -66,7 +66,7 @@ export function UseCases() {
   const [activeCase, setActiveCase] = useState(0)
 
   return (
-    <section className="pt-16 pb-24 px-4 bg-white">
+    <section className="py-24 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
         <div className="text-left mb-16">
