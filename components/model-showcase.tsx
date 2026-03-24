@@ -47,7 +47,10 @@ export function ModelShowcase() {
   }, [isMounted])
 
   useEffect(() => {
-    setScrollPosition((prev) => (prev + 1) % (models.length * 2))
+    const interval = setInterval(() => {
+      setScrollPosition((prev) => prev + 1)
+    }, 30)
+    return () => clearInterval(interval)
   }, [])
 
 
@@ -56,21 +59,17 @@ export function ModelShowcase() {
       <div className="max-w-7xl mx-auto text-center">
         {/* Heading */}
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          {"The industry's best "}
-          {isMounted ? (
-            <span
-              className={`inline-block transition-all duration-500 ease-out ${
-                isAnimating 
-                  ? "opacity-0 blur-sm scale-95" 
-                  : "opacity-100 blur-0 scale-100"
-              }`}
-            >
-              {rotatingWords[currentWordIndex]}
-            </span>
-          ) : (
-            <span>{rotatingWords[0]}</span>
-          )}
-          {" models."}
+          <span>The industry&apos;s best</span>{" "}
+          <span
+            className={`inline-block transition-all duration-500 ease-out ${
+              isMounted && isAnimating 
+                ? "opacity-0 blur-sm scale-95" 
+                : "opacity-100 blur-0 scale-100"
+            }`}
+          >
+            {rotatingWords[currentWordIndex]}
+          </span>{" "}
+          <span>models.</span>
         </h2>
         <p className="text-xl text-gray-500 mb-12">In one subscription.</p>
 
@@ -83,15 +82,15 @@ export function ModelShowcase() {
             className="flex gap-8 transition-transform duration-100"
             style={{ transform: `translateX(-${scrollPosition * 2}px)` }}
           >
-            {[...models, ...models, ...models].map((model, index) => (
+            {[...models, ...models, ...models, ...models].map((model, index) => (
               <div
                 key={index}
-                className="flex items-center gap-3 px-6 py-3 rounded-full bg-gray-50 border border-gray-200 whitespace-nowrap"
+                className="flex items-center gap-3 px-6 py-3 rounded-full bg-transparent whitespace-nowrap"
               >
-                <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center font-bold text-gray-900">
+                <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center font-bold text-gray-500">
                   {model.logo}
                 </div>
-                <span className="text-gray-900 font-medium">{model.name}</span>
+                <span className="text-gray-500 font-medium">{model.name}</span>
               </div>
             ))}
           </div>
