@@ -28,8 +28,14 @@ export function ModelShowcase() {
   const [scrollPosition, setScrollPosition] = useState(0)
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!isMounted) return
     const interval = setInterval(() => {
       setIsAnimating(true)
       setTimeout(() => {
@@ -38,7 +44,7 @@ export function ModelShowcase() {
       }, 300)
     }, 2500)
     return () => clearInterval(interval)
-  }, [])
+  }, [isMounted])
 
   useEffect(() => {
     setScrollPosition((prev) => (prev + 1) % (models.length * 2))
@@ -50,15 +56,21 @@ export function ModelShowcase() {
       <div className="max-w-7xl mx-auto text-center">
         {/* Heading */}
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          The industry's best{" "}
-          <span
-            className={`inline transition-all duration-300 ${
-              isAnimating ? "opacity-0" : "opacity-100"
-            }`}
-          >
-            {rotatingWords[currentWordIndex]}
-          </span>{" "}
-          models.
+          {"The industry's best "}
+          {isMounted ? (
+            <span
+              className={`inline-block transition-all duration-500 ease-out ${
+                isAnimating 
+                  ? "opacity-0 blur-sm scale-95" 
+                  : "opacity-100 blur-0 scale-100"
+              }`}
+            >
+              {rotatingWords[currentWordIndex]}
+            </span>
+          ) : (
+            <span>{rotatingWords[0]}</span>
+          )}
+          {" models."}
         </h2>
         <p className="text-xl text-gray-500 mb-12">In one subscription.</p>
 

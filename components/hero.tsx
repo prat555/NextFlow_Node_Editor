@@ -1,26 +1,8 @@
-"use client"
-
-import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 
-const rotatingWords = ["Image", "Video", "3D", "Creative"]
-
 export function Hero() {
-  const [currentWordIndex, setCurrentWordIndex] = useState(0)
-  const [isAnimating, setIsAnimating] = useState(false)
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsAnimating(true)
-      setTimeout(() => {
-        setCurrentWordIndex((prev) => (prev + 1) % rotatingWords.length)
-        setIsAnimating(false)
-      }, 300)
-    }, 2500)
-    return () => clearInterval(interval)
-  }, [])
 
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center pt-16 px-4 overflow-hidden bg-background">
@@ -34,19 +16,7 @@ export function Hero() {
         {/* Main headline */}
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground mb-6">
           <span className="block">The most powerful AI</span>
-          <span className="block mt-2">
-            suite for{" "}
-            <span className="relative inline-block min-w-[200px]">
-              <span
-                className={`inline-block transition-all duration-300 ${
-                  isAnimating ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"
-                }`}
-              >
-                {rotatingWords[currentWordIndex]}
-              </span>
-            </span>
-            {" "}Creatives.
-          </span>
+          <span className="block mt-2">suite for Creatives.</span>
         </h1>
 
         {/* Subtitle */}
