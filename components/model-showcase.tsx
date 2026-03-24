@@ -45,7 +45,7 @@ export function ModelShowcase() {
 
 
   return (
-    <section className="py-24 px-4 overflow-hidden bg-white">
+    <section className="pt-12 pb-24 px-4 overflow-hidden bg-white">
       <div className="max-w-7xl mx-auto">
         {/* Heading */}
         <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-2 text-left">

@@ -181,14 +181,14 @@ export function WorkflowShowcase() {
           <div className="flex justify-end gap-2 mt-5 pr-16">
           <button
             onClick={() => scroll("left")}
-            className="w-12 h-12 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors"
+            className="w-12 h-12 rounded-full bg-gray-300 border border-gray-300 flex items-center justify-center text-gray-700 hover:bg-gray-400 transition-colors"
             aria-label="Previous"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
           <button
             onClick={() => scroll("right")}
-            className="w-12 h-12 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors"
+            className="w-12 h-12 rounded-full bg-gray-300 border border-gray-300 flex items-center justify-center text-gray-700 hover:bg-gray-400 transition-colors"
             aria-label="Next"
           >
             <ChevronRight className="w-6 h-6" />
