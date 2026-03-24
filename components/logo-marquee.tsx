@@ -13,13 +13,13 @@ const companies = [
 export function LogoMarquee() {
   return (
     <section className="py-24 px-4 bg-white">
-      <div className="max-w-7xl mx-auto text-center">
-        <p className="text-sm text-gray-500 mb-8 uppercase tracking-wider">
+      <div className="max-w-7xl mx-auto">
+        <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-4 text-left">
           A tool suite for pros and beginners alike
-        </p>
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-12 max-w-3xl mx-auto text-balance">
-          Krea powers millions of creatives, enterprises, and everyday people.
         </h2>
+        <p className="text-lg text-gray-500 mb-12 text-left">
+          Krea powers millions of creatives, enterprises, and everyday people.
+        </p>
 
         {/* Logo scroll */}
         <div className="relative overflow-hidden mb-12">
@@ -36,7 +36,7 @@ export function LogoMarquee() {
         </div>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div className="flex flex-col sm:flex-row items-start gap-4">
           <Button
             size="lg"
             className="bg-gray-900 text-white hover:bg-gray-800 px-8 rounded-full"
