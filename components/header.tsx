@@ -32,7 +32,7 @@ export function Header() {
           <nav className="hidden md:flex items-center gap-1">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+                <Button variant="ghost" className="text-white hover:text-white/80">
                   Generate <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -65,7 +65,7 @@ export function Header() {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+                <Button variant="ghost" className="text-white hover:text-white/80">
                   Edit <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -93,7 +93,7 @@ export function Header() {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+                <Button variant="ghost" className="text-white hover:text-white/80">
                   Customize <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -125,7 +125,7 @@ export function Header() {
               </Button>
             </Link>
             <Link href="/dashboard">
-              <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+              <Button variant="ghost" className="text-white hover:text-white/80">
                 Log in
               </Button>
             </Link>
