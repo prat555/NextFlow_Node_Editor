@@ -35,7 +35,17 @@ export function Hero() {
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground mb-6">
           <span className="block">The most powerful AI</span>
           <span className="block mt-2">
-            suite for Generative Creatives.
+            suite for{" "}
+            <span className="relative inline-block min-w-[200px]">
+              <span
+                className={`inline-block transition-all duration-300 ${
+                  isAnimating ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"
+                }`}
+              >
+                {rotatingWords[currentWordIndex]}
+              </span>
+            </span>
+            {" "}Creatives.
           </span>
         </h1>
 

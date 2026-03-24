@@ -13,6 +13,8 @@ const models = [
   { name: "Krea 1", logo: "K" },
 ]
 
+const rotatingWords = ["Image", "Video", "3D", "Creative"]
+
 const features = [
   { icon: Zap, text: "Industry-leading inference speed" },
   { icon: Image, text: "22K Pixels upscaling" },
@@ -24,13 +26,24 @@ const features = [
 
 export function ModelShowcase() {
   const [scrollPosition, setScrollPosition] = useState(0)
+  const [currentWordIndex, setCurrentWordIndex] = useState(0)
+  const [isAnimating, setIsAnimating] = useState(false)
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setScrollPosition((prev) => (prev + 1) % (models.length * 2))
-    }, 50)
+      setIsAnimating(true)
+      setTimeout(() => {
+        setCurrentWordIndex((prev) => (prev + 1) % rotatingWords.length)
+        setIsAnimating(false)
+      }, 300)
+    }, 2500)
     return () => clearInterval(interval)
   }, [])
+
+  useEffect(() => {
+    setScrollPosition((prev) => (prev + 1) % (models.length * 2))
+  }, [])
+
 
   return (
     <section className="py-24 px-4 overflow-hidden bg-white">
@@ -38,8 +51,14 @@ export function ModelShowcase() {
         {/* Heading */}
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
           {"The industry's best "}
-          <span className="relative">
-            <span className="text-gray-900">Generative</span>
+          <span className="relative inline-block min-w-[140px]">
+            <span
+              className={`inline-block transition-all duration-300 ${
+                isAnimating ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"
+              }`}
+            >
+              {rotatingWords[currentWordIndex]}
+            </span>
           </span>
           {" models."}
         </h2>
