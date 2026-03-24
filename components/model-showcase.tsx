@@ -45,10 +45,10 @@ export function ModelShowcase() {
 
 
   return (
-    <section className="py-24 px-4 overflow-hidden bg-white">
-      <div className="max-w-7xl mx-auto text-center">
+    <section className="pt-12 pb-24 px-4 overflow-hidden bg-white">
+      <div className="max-w-7xl mx-auto">
         {/* Heading */}
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+        <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-2 text-left">
           The industry&apos;s best{" "}
           <span
             className={`inline-block transition-all duration-500 ease-out ${
@@ -61,7 +61,7 @@ export function ModelShowcase() {
           </span>
           {" "}models.
         </h2>
-        <p className="text-xl text-gray-500 mb-12">In one subscription.</p>
+        <p className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-12 text-left">In one subscription.</p>
 
         {/* Scrolling model logos */}
         <div className="relative mb-16 overflow-hidden">
