@@ -118,7 +118,7 @@ export function WorkflowShowcase() {
               className="relative flex-shrink-0 rounded-2xl overflow-hidden cursor-pointer group"
               style={{
                 width: `calc((100vw - ${LEFT_PADDING}px - 2.7 * ${CARD_GAP}px) / 3.7)`,
-                aspectRatio: "9/13",
+                aspectRatio: "9/11",
                 scrollSnapAlign: "start",
               }}
               onMouseEnter={() => setHoveredId(card.id)}
@@ -129,6 +129,7 @@ export function WorkflowShowcase() {
                 src={card.image}
                 alt={card.quote}
                 fill
+                loading={card.id === 1 ? "eager" : "lazy"}
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
                 sizes="30vw"
                 unoptimized
@@ -156,7 +157,7 @@ export function WorkflowShowcase() {
                   <p className="text-[10px] font-bold tracking-widest text-white/60 uppercase mb-1.5">
                     {card.label}
                   </p>
-                  <p className="text-white font-bold text-xl leading-snug">{card.quote}</p>
+                  <p className="text-white font-bold text-2xl leading-snug">{card.quote}</p>
                 </div>
 
                 {/* Generate button — appears on hover, rectangular */}
