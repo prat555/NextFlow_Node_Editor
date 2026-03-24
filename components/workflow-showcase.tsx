@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import Image from "next/image"
 
 const CARD_GAP = 48 // px, doubled spacing between cards
-const LEFT_PADDING = 32 // px, matches pl-8
+const LEFT_PADDING = 64 // px, doubled from 32
 
 const cards = [
   {
@@ -98,7 +98,7 @@ export function WorkflowShowcase() {
   return (
     <section className="bg-white py-16 overflow-hidden">
       {/* Left padding only — right edge is flush so last card touches the scrollbar */}
-      <div className="pl-8 pr-0 relative">
+      <div className="pl-16 pr-0 relative">
         {/* Scrollable row */}
         <div
           ref={scrollRef}
@@ -109,7 +109,7 @@ export function WorkflowShowcase() {
             msOverflowStyle: "none",
             scrollSnapType: "x mandatory",
             scrollPaddingLeft: LEFT_PADDING,
-            paddingRight: "32px",
+            paddingRight: "64px",
           }}
         >
           {cards.map((card) => (
@@ -178,7 +178,7 @@ export function WorkflowShowcase() {
         </div>
 
         {/* Nav arrows — bottom right inside padded wrapper */}
-        <div className="flex justify-end gap-2 mt-5 pr-8">
+          <div className="flex justify-end gap-2 mt-5 pr-16">
           <button
             onClick={() => scroll("left")}
             className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors"
