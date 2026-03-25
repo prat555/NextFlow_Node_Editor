@@ -6,15 +6,12 @@ import { ChevronLeft, ChevronRight, Image, Video, Wand2, Zap } from "lucide-reac
 const heroSlides = [
   {
     title: "Start by generating a free image",
-    gradient: "from-sky-300 via-sky-200 to-sky-100",
   },
   {
     title: "Create stunning videos with AI",
-    gradient: "from-orange-300 via-amber-200 to-yellow-100",
   },
   {
     title: "Enhance your photos instantly",
-    gradient: "from-pink-300 via-rose-200 to-red-100",
   },
 ]
 
@@ -24,8 +21,6 @@ const toolCards = [
     description: "Generate stunning images from text",
     icon: Image,
     iconColor: "text-blue-400",
-    bgColor: "bg-blue-500/20",
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202026-03-24%20163522-A7MOK8G34rPxKPIVVsI1UNhFGtSaty.png",
     cardBg: "bg-gradient-to-br from-yellow-400 to-orange-500",
   },
   {
@@ -33,27 +28,21 @@ const toolCards = [
     description: "Create videos from images or text",
     icon: Video,
     iconColor: "text-orange-400",
-    bgColor: "bg-orange-500/20",
-    image: "",
-    cardBg: "bg-gradient-to-br from-gray-900 to-black",
+    cardBg: "bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]",
   },
   {
     name: "Enhancer",
     description: "Upscale and enhance your images",
     icon: Wand2,
     iconColor: "text-pink-400",
-    bgColor: "bg-pink-500/20",
-    image: "",
-    cardBg: "bg-gradient-to-br from-gray-800 to-gray-900",
+    cardBg: "bg-gradient-to-br from-[#1a2a3a] to-[#0a1520]",
   },
   {
     name: "Realtime",
     description: "Generate images in real-time",
     icon: Zap,
-    iconColor: "text-blue-400",
-    bgColor: "bg-blue-500/20",
-    image: "",
-    cardBg: "bg-gradient-to-br from-purple-900 to-indigo-900",
+    iconColor: "text-purple-400",
+    cardBg: "bg-gradient-to-br from-purple-900 to-indigo-950",
   },
 ]
 
@@ -69,34 +58,28 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 bg-[#0d0d0d] min-h-screen">
       {/* Hero Banner */}
       <div className="relative">
         <div
-          className={`relative h-80 rounded-3xl bg-gradient-to-br ${heroSlides[currentSlide].gradient} flex items-center justify-center overflow-hidden`}
+          className="relative h-72 rounded-2xl bg-gradient-to-br from-sky-200 via-sky-100 to-white flex items-center justify-center overflow-hidden"
         >
-          {/* Decorative elements */}
-          <div className="absolute inset-0 opacity-30">
-            <div className="absolute top-10 right-20 w-32 h-32 bg-white/50 rounded-full blur-3xl" />
-            <div className="absolute bottom-10 left-20 w-40 h-40 bg-white/30 rounded-full blur-3xl" />
-          </div>
-
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-white text-center px-8 relative z-10 drop-shadow-lg">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-light text-gray-800 text-center px-8 relative z-10">
             {heroSlides[currentSlide].title}
           </h1>
         </div>
 
         {/* Navigation arrows */}
-        <div className="absolute right-4 bottom-[-50px] flex items-center gap-2">
+        <div className="absolute right-4 bottom-4 flex items-center gap-2">
           <button
             onClick={prevSlide}
-            className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+            className="w-10 h-10 rounded-full bg-black/20 hover:bg-black/30 flex items-center justify-center text-gray-700 transition-colors"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             onClick={nextSlide}
-            className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+            className="w-10 h-10 rounded-full bg-black/20 hover:bg-black/30 flex items-center justify-center text-gray-700 transition-colors"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -104,24 +87,24 @@ export default function DashboardPage() {
       </div>
 
       {/* CTA Button */}
-      <div className="flex justify-center pt-4">
-        <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-full font-medium transition-colors">
-          <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+      <div className="flex justify-center">
+        <button className="flex items-center gap-2 bg-blue-500 hover:bg-blue-400 text-white px-6 py-3 rounded-full font-medium transition-colors">
+          <span className="w-1.5 h-1.5 bg-white rounded-full" />
           Click here to open the image tool
         </button>
       </div>
 
       {/* Tool Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {toolCards.map((tool) => (
           <div
             key={tool.name}
             className={`group relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer ${tool.cardBg}`}
           >
-            {/* Placeholder content */}
+            {/* Centered icon */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
-                <tool.icon className={`w-8 h-8 ${tool.iconColor}`} />
+              <div className="w-14 h-14 rounded-xl bg-black/30 backdrop-blur-sm flex items-center justify-center">
+                <tool.icon className={`w-7 h-7 ${tool.iconColor}`} />
               </div>
             </div>
 
@@ -132,20 +115,13 @@ export default function DashboardPage() {
                 <p className="text-gray-300 text-sm">{tool.description}</p>
               </div>
             </div>
-
-            {/* Tool badge */}
-            <div className="absolute bottom-4 right-4">
-              <div className={`w-10 h-10 rounded-xl ${tool.bgColor} backdrop-blur-sm flex items-center justify-center`}>
-                <tool.icon className={`w-5 h-5 ${tool.iconColor}`} />
-              </div>
-            </div>
           </div>
         ))}
       </div>
 
       {/* Recent/Suggested section */}
-      <div className="pt-8">
-        <h2 className="text-xl font-semibold text-white mb-4">Quick Actions</h2>
+      <div className="pt-6">
+        <h2 className="text-lg font-medium text-white mb-4">Quick Actions</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { label: "Text to Image", icon: Image, color: "text-blue-400" },
@@ -155,7 +131,7 @@ export default function DashboardPage() {
           ].map((action) => (
             <button
               key={action.label}
-              className="flex items-center gap-3 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-left"
+              className="flex items-center gap-3 p-4 rounded-xl bg-[#1a1a1a] hover:bg-[#222] transition-colors text-left"
             >
               <action.icon className={`w-5 h-5 ${action.color}`} />
               <span className="text-white text-sm font-medium">{action.label}</span>
