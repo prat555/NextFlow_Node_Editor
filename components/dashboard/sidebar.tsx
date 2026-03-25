@@ -28,16 +28,16 @@ const mainNav = [
 ]
 
 const tools = [
-  { name: "Image", href: "/dashboard/image", icon: Image, iconColor: "text-blue-400", bgColor: "bg-blue-500/20" },
-  { name: "Video", href: "/dashboard/video", icon: Video, iconColor: "text-orange-400", bgColor: "bg-orange-500/20" },
-  { name: "Enhancer", href: "/dashboard/enhancer", icon: Wand2, iconColor: "text-gray-400", bgColor: "bg-gray-500/20" },
-  { name: "Nano Banana", href: "/dashboard/nano-banana", icon: () => <span className="text-sm">🌙</span>, iconColor: "text-yellow-400", bgColor: "bg-yellow-500/20" },
-  { name: "Realtime", href: "/dashboard/realtime", icon: Zap, iconColor: "text-blue-400", bgColor: "bg-blue-500/20" },
-  { name: "Edit", href: "/dashboard/edit", icon: Type, iconColor: "text-purple-400", bgColor: "bg-purple-500/20" },
-  { name: "Video Lipsync", href: "/dashboard/video-lipsync", icon: Mic, iconColor: "text-gray-500", bgColor: "bg-gray-600/20" },
-  { name: "Motion Transfer", href: "/dashboard/motion-transfer", icon: PersonStanding, iconColor: "text-yellow-400", bgColor: "bg-yellow-500/20" },
-  { name: "3D Objects", href: "/dashboard/3d-objects", icon: Circle, iconColor: "text-gray-400", bgColor: "bg-gray-500/20" },
-  { name: "Video Restyle", href: "/dashboard/video-restyle", icon: Film, iconColor: "text-green-400", bgColor: "bg-green-500/20" },
+  { name: "Image", href: "/dashboard/image", icon: Image, iconColor: "text-blue-400" },
+  { name: "Video", href: "/dashboard/video", icon: Video, iconColor: "text-orange-400" },
+  { name: "Enhancer", href: "/dashboard/enhancer", icon: Wand2, iconColor: "text-gray-400" },
+  { name: "Nano Banana", href: "/dashboard/nano-banana", icon: Zap, iconColor: "text-yellow-400" },
+  { name: "Realtime", href: "/dashboard/realtime", icon: Zap, iconColor: "text-blue-400" },
+  { name: "Edit", href: "/dashboard/edit", icon: Type, iconColor: "text-purple-400" },
+  { name: "Video Lipsync", href: "/dashboard/video-lipsync", icon: Mic, iconColor: "text-gray-500" },
+  { name: "Motion Transfer", href: "/dashboard/motion-transfer", icon: PersonStanding, iconColor: "text-yellow-400" },
+  { name: "3D Objects", href: "/dashboard/3d-objects", icon: Circle, iconColor: "text-gray-400" },
+  { name: "Video Restyle", href: "/dashboard/video-restyle", icon: Film, iconColor: "text-green-400" },
 ]
 
 export function DashboardSidebar() {
@@ -93,7 +93,6 @@ export function DashboardSidebar() {
         <div className={`space-y-0.5 transition-all duration-300 ${showAllTools ? "" : ""}`}>
           {visibleTools.map((item) => {
             const isActive = pathname === item.href
-            const IconComponent = item.icon
             return (
               <button
                 key={item.name}
@@ -103,13 +102,7 @@ export function DashboardSidebar() {
                     : "text-gray-400 hover:bg-[#1a1a1a] hover:text-white"
                 } ${collapsed ? "justify-center" : ""}`}
               >
-                <div className={`rounded flex items-center justify-center ${item.bgColor} ${collapsed ? "w-6 h-6" : "w-5 h-5"}`}>
-                  {typeof IconComponent === 'function' && IconComponent.name === '' ? (
-                    <IconComponent />
-                  ) : (
-                    <IconComponent className={`${item.iconColor} ${collapsed ? "w-4 h-4" : "w-3 h-3"}`} />
-                  )}
-                </div>
+                <item.icon className={`flex-shrink-0 ${item.iconColor} ${collapsed ? "w-5 h-5" : "w-4 h-4"}`} />
                 {!collapsed && <span className="text-sm">{item.name}</span>}
               </button>
             )
