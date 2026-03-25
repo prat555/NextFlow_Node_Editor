@@ -119,16 +119,17 @@ export function DashboardSidebar() {
             <span className="text-sm">{showAllTools ? "Less" : "More"}</span>
           </button>
         )}
+      </nav>
 
-        {/* Sessions section */}
+      {/* Bottom section - Sessions */}
+      <div className="px-3 pb-4 mt-auto">
         {!collapsed && (
-          <p className="text-[11px] text-[#555] tracking-wider px-3 pt-6 pb-2">
+          <p className="text-[11px] text-[#555] tracking-wider px-3 pt-4 pb-2">
             Sessions
           </p>
         )}
-        {collapsed && <div className="h-6" />}
 
-        {/* User in Sessions */}
+        {/* User profile */}
         <div className={`flex items-center gap-3 px-3 py-2 ${collapsed ? "justify-center" : ""}`}>
           <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
             A
@@ -140,7 +141,7 @@ export function DashboardSidebar() {
             </div>
           )}
         </div>
-      </nav>
+      </div>
     </aside>
   )
 }
