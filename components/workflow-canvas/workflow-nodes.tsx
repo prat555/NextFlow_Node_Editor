@@ -65,21 +65,19 @@ async function uploadWithTransloadit(file: File) {
       reject(new Error(message))
     })
     uppy.on("transloadit:complete", (assembly: any) => {
+      // Try the exported CDN step first, then fall back to :original
       const files =
+        assembly?.results?.exported ??
         assembly?.results?.[":original"] ??
         assembly?.results?.upload ??
-        assembly?.results?.export ??
-        assembly?.results?.original ??
-        assembly?.successful ??
-        assembly?.uploads ??
         []
+
       const first = files[0]
+
       const url =
         first?.ssl_url ??
         first?.url ??
-        first?.uploadURL ??
-        first?.transloadit?.[0]?.ssl_url ??
-        first?.transloadit?.[0]?.url
+        first?.uploadURL
 
       if (!url) {
         reject(new Error("Transloadit did not return a file URL"))
@@ -99,6 +97,14 @@ async function uploadWithTransloadit(file: File) {
   await uppy.cancelAll()
   uppy.destroy()
   return resultUrl
+}
+
+function getUrlHost(url: string): string | null {
+  try {
+    return new URL(url).host
+  } catch {
+    return null
+  }
 }
 
 function NodeContainer({
@@ -225,6 +231,13 @@ function UploadArea({
     setUploading(true)
     try {
       const url = await uploadWithTransloadit(file)
+      const host = getUrlHost(url)
+      console.info("[media-upload] Uploaded via Transloadit", {
+        kind,
+        fileName: file.name,
+        host,
+        url,
+      })
       onFile(url)
     } catch (error) {
       const message = extractErrorMessage(error)

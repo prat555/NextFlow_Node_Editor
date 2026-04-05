@@ -41,11 +41,12 @@ export async function executeWorkflowServer(input: ServerExecutionInput) {
     const phases = buildExecutionPhases(input.nodes, input.edges, restricted)
     const outputs: Record<string, unknown> = {}
 
-    // Execute phase by phase
+    // Execute phase by phase, but run independent nodes in each phase concurrently.
     for (const phase of phases) {
-      for (const nodeId of phase) {
+      await Promise.all(
+        phase.map(async (nodeId) => {
           const node = nodesById.get(nodeId)
-          if (!node || !restricted.has(nodeId)) continue
+          if (!node || !restricted.has(nodeId)) return
 
           const t0 = performance.now()
           const nodeData = (node.data ?? {}) as WorkflowNodeData
@@ -136,7 +137,8 @@ export async function executeWorkflowServer(input: ServerExecutionInput) {
               },
             })
           }
-      }
+        }),
+      )
     }
 
     // Mark run as complete

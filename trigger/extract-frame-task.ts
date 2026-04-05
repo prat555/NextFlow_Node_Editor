@@ -6,32 +6,19 @@ export type ExtractFrameTaskPayload = {
   timestamp: string
 }
 
-function addCacheBuster(url: string): string {
-  const token = Date.now().toString()
-
-  try {
-    const parsed = new URL(url)
-    parsed.searchParams.set("t", token)
-    return parsed.toString()
-  } catch {
-    const separator = url.includes("?") ? "&" : "?"
-    return `${url}${separator}t=${token}`
-  }
-}
-
 function normalizeTimestamp(value: string): string {
   const raw = value.trim()
-  if (!raw) return "0"
+  if (!raw) return "50%"
 
   if (raw.endsWith("%")) {
     const pct = Number(raw.slice(0, -1))
-    if (!Number.isFinite(pct)) return "0"
+    if (!Number.isFinite(pct)) return "50%"
     const clamped = Math.max(0, Math.min(100, pct))
     return `${clamped}%`
   }
 
   const seconds = Number(raw)
-  if (!Number.isFinite(seconds)) return "0"
+  if (!Number.isFinite(seconds)) return "50%"
   return `${Math.max(0, seconds)}`
 }
 
@@ -42,7 +29,6 @@ export const extractFrameTask = task({
     if (!videoUrl) {
       throw new Error("videoUrl is required")
     }
-
     if (!/^https?:\/\//i.test(videoUrl)) {
       throw new Error("Valid videoUrl is required")
     }
@@ -54,19 +40,14 @@ export const extractFrameTask = task({
         robot: "/http/import",
         url: addCacheBuster(videoUrl),
       },
-      // Re-encode first to increase keyframe density, then extract.
-      // This improves timestamp accuracy for /video/thumbs on videos with sparse keyframes.
-      encode: {
-        robot: "/video/encode",
-        use: "import",
-        preset: "ipad-high",
-      },
       frame: {
         robot: "/video/thumbs",
-        use: "encode",
+        use: "import",
         count: 1,
         format: "jpg",
-        from: timestamp,
+        // ✅ FIX: correct parameter is `offsets`, not `from`
+        // Pass as array — Transloadit picks the closest keyframe to each offset
+        offsets: [timestamp],
       },
     }
 
