@@ -32,6 +32,75 @@ function buildAuthParams(key: string) {
   return { key, expires }
 }
 
+async function createAssembly(
+  params: string,
+  signature: string,
+  file?: { bytes: Buffer; filename: string; contentType: string }
+): Promise<AssemblyStatusResponse> {
+  const body = new FormData()
+  body.set("params", params)
+  body.set("signature", signature)
+
+  if (file) {
+    const blob = new Blob([file.bytes], { type: file.contentType })
+    body.set("file", blob, file.filename)
+  }
+
+  const startRes = await fetch("https://api2.transloadit.com/assemblies", {
+    method: "POST",
+    body,
+  })
+
+  if (!startRes.ok) {
+    const text = await startRes.text().catch(() => "")
+    throw new Error(`Failed to create Transloadit assembly (${startRes.status}): ${text}`)
+  }
+
+  return (await startRes.json()) as AssemblyStatusResponse
+}
+
+async function waitForAssemblyResult(assemblySslUrl: string, resultStep: string): Promise<string> {
+  const startedAt = Date.now()
+  const timeoutMs = 3 * 60 * 1000
+
+  while (Date.now() - startedAt < timeoutMs) {
+    await new Promise((r) => setTimeout(r, 1500))
+
+    const statusRes = await fetch(assemblySslUrl)
+    if (!statusRes.ok) continue
+
+    const status = (await statusRes.json()) as AssemblyStatusResponse
+    const okCode = status.ok ?? ""
+
+    if (okCode === "ASSEMBLY_COMPLETED") {
+      const files = status.results?.[resultStep] ?? []
+      const first = files[0]
+      const url = first?.ssl_url ?? first?.url
+      if (!url) {
+        const keys = Object.keys(status.results ?? {})
+        throw new Error(
+          `Transloadit completed but step "${resultStep}" had no output. Available steps: ${keys.join(", ")}`
+        )
+      }
+      return url
+    }
+
+    if (TERMINAL_ERROR.has(okCode) || status.error) {
+      throw new Error(
+        `Transloadit assembly failed with status "${okCode}": ${status.message ?? status.error ?? "unknown error"}`
+      )
+    }
+
+    if (IN_PROGRESS.has(okCode) || !okCode) {
+      continue
+    }
+
+    console.warn(`[transloadit] Unknown assembly status: "${okCode}" - continuing to poll`)
+  }
+
+  throw new Error("Transloadit assembly timed out after 3 minutes")
+}
+
 const TERMINAL_OK = new Set(["ASSEMBLY_COMPLETED"])
 const TERMINAL_ERROR = new Set([
   "ASSEMBLY_FAILED",
@@ -55,65 +124,37 @@ export async function runTransloaditAssembly(
   const params = JSON.stringify(paramsObj)
   const signature = signParams(params, secret)
 
-  const body = new URLSearchParams()
-  body.set("params", params)
-  body.set("signature", signature)
-
-  const startRes = await fetch("https://api2.transloadit.com/assemblies", {
-    method: "POST",
-    body,
-  })
-
-  if (!startRes.ok) {
-    const text = await startRes.text().catch(() => "")
-    throw new Error(`Failed to create Transloadit assembly (${startRes.status}): ${text}`)
-  }
-
-  const started = (await startRes.json()) as AssemblyStatusResponse
+  const started = await createAssembly(params, signature)
   if (!started.assembly_ssl_url) {
     throw new Error("Transloadit did not return assembly URL")
   }
 
-  const startedAt = Date.now()
-  const timeoutMs = 3 * 60 * 1000
+  return waitForAssemblyResult(started.assembly_ssl_url, resultStep)
+}
 
-  while (Date.now() - startedAt < timeoutMs) {
-    await new Promise((r) => setTimeout(r, 1500))
-
-    const statusRes = await fetch(started.assembly_ssl_url)
-    if (!statusRes.ok) continue
-
-    const status = (await statusRes.json()) as AssemblyStatusResponse
-    const okCode = status.ok ?? ""
-
-    if (okCode === "ASSEMBLY_COMPLETED") {
-      const files = status.results?.[resultStep] ?? []
-      const first = files[0]
-      const url = first?.ssl_url ?? first?.url
-      if (!url) {
-        // Log all result keys to help debug wrong step name
-        const keys = Object.keys(status.results ?? {})
-        throw new Error(
-          `Transloadit completed but step "${resultStep}" had no output. Available steps: ${keys.join(", ")}`
-        )
-      }
-      return url
-    }
-
-    if (TERMINAL_ERROR.has(okCode) || status.error) {
-      throw new Error(
-        `Transloadit assembly failed with status "${okCode}": ${status.message ?? status.error ?? "unknown error"}`
-      )
-    }
-
-    if (IN_PROGRESS.has(okCode) || !okCode) {
-      // still waiting — loop continues
-      continue
-    }
-
-    // Unknown status — log and keep polling rather than silently timing out
-    console.warn(`[transloadit] Unknown assembly status: "${okCode}" — continuing to poll`)
+export async function uploadBufferToTransloadit(
+  file: { bytes: Buffer; filename: string; contentType?: string },
+  resultStep = ":original"
+): Promise<string> {
+  const { key, secret } = getAuth()
+  const steps = {
+    [resultStep]: {
+      robot: "/upload/handle",
+      result: true,
+    },
   }
 
-  throw new Error("Transloadit assembly timed out after 3 minutes")
+  const params = JSON.stringify({ auth: buildAuthParams(key), steps })
+  const signature = signParams(params, secret)
+  const started = await createAssembly(params, signature, {
+    bytes: file.bytes,
+    filename: file.filename,
+    contentType: file.contentType ?? "application/octet-stream",
+  })
+
+  if (!started.assembly_ssl_url) {
+    throw new Error("Transloadit did not return assembly URL")
+  }
+
+  return waitForAssemblyResult(started.assembly_ssl_url, resultStep)
 }

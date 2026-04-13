@@ -645,8 +645,8 @@ export function CropImageNode(props: NodeProps) {
               onChange={(e) => updateNodeData(id, { x_percent: Number(e.target.value) } as any)}
               className={
                 canvasMode === "light"
-                  ? "w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-black outline-none disabled:opacity-50"
-                  : "w-full bg-[#0f0f10] border border-[#2a2a2c] rounded-xl p-3 text-sm text-white outline-none disabled:opacity-50"
+                  ? "w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-black outline-none disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  : "w-full bg-[#0f0f10] border border-[#2a2a2c] rounded-xl p-3 text-sm text-white outline-none disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               }
             />
           </InputField>
@@ -658,8 +658,8 @@ export function CropImageNode(props: NodeProps) {
               onChange={(e) => updateNodeData(id, { y_percent: Number(e.target.value) } as any)}
               className={
                 canvasMode === "light"
-                  ? "w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-black outline-none disabled:opacity-50"
-                  : "w-full bg-[#0f0f10] border border-[#2a2a2c] rounded-xl p-3 text-sm text-white outline-none disabled:opacity-50"
+                  ? "w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-black outline-none disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  : "w-full bg-[#0f0f10] border border-[#2a2a2c] rounded-xl p-3 text-sm text-white outline-none disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               }
             />
           </InputField>
@@ -671,8 +671,8 @@ export function CropImageNode(props: NodeProps) {
               onChange={(e) => updateNodeData(id, { width_percent: Number(e.target.value) } as any)}
               className={
                 canvasMode === "light"
-                  ? "w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-black outline-none disabled:opacity-50"
-                  : "w-full bg-[#0f0f10] border border-[#2a2a2c] rounded-xl p-3 text-sm text-white outline-none disabled:opacity-50"
+                  ? "w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-black outline-none disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  : "w-full bg-[#0f0f10] border border-[#2a2a2c] rounded-xl p-3 text-sm text-white outline-none disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               }
             />
           </InputField>
@@ -684,8 +684,8 @@ export function CropImageNode(props: NodeProps) {
               onChange={(e) => updateNodeData(id, { height_percent: Number(e.target.value) } as any)}
               className={
                 canvasMode === "light"
-                  ? "w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-black outline-none disabled:opacity-50"
-                  : "w-full bg-[#0f0f10] border border-[#2a2a2c] rounded-xl p-3 text-sm text-white outline-none disabled:opacity-50"
+                  ? "w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-black outline-none disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  : "w-full bg-[#0f0f10] border border-[#2a2a2c] rounded-xl p-3 text-sm text-white outline-none disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               }
             />
           </InputField>
@@ -696,6 +696,16 @@ export function CropImageNode(props: NodeProps) {
             <p className="text-[#888] text-xs mb-1">Cropped Result</p>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={data.croppedUrl} alt="cropped" className="w-full rounded-lg max-h-[120px] object-cover" />
+          </div>
+        ) : null}
+
+        {data.errorMessage ? (
+          <div className="mt-2 p-3 bg-red-950/30 rounded-xl border border-red-900/50">
+            <div className="flex items-center gap-1.5 mb-1">
+              <X className="w-3 h-3 text-red-400" />
+              <span className="text-red-400 text-xs">Error</span>
+            </div>
+            <p className="text-red-300 text-xs">{data.errorMessage}</p>
           </div>
         ) : null}
       </div>
@@ -768,6 +778,22 @@ export function ExtractFrameNode(props: NodeProps) {
             <p className="text-[#888] text-xs mb-1">Extracted Frame</p>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={data.frameUrl} alt="frame" className="w-full rounded-lg max-h-[120px] object-cover" />
+          </div>
+        ) : null}
+
+        {data.errorMessage ? (
+          <div
+            className={
+              canvasMode === "light"
+                ? "mt-2 p-3 rounded-xl border border-red-200 bg-red-50"
+                : "mt-2 p-3 bg-red-950/30 rounded-xl border border-red-900/50"
+            }
+          >
+            <div className="flex items-center gap-1.5 mb-1">
+              <X className={canvasMode === "light" ? "w-3 h-3 text-red-700" : "w-3 h-3 text-red-400"} />
+              <span className={canvasMode === "light" ? "text-red-700 text-xs font-medium" : "text-red-400 text-xs"}>Error</span>
+            </div>
+            <p className={canvasMode === "light" ? "text-red-700 text-xs" : "text-red-300 text-xs"}>{data.errorMessage}</p>
           </div>
         ) : null}
       </div>

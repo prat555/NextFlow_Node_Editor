@@ -3,6 +3,73 @@ import { useCallback, useEffect, useRef } from "react"
 import { useWorkflowStore } from "@/components/workflow-canvas/workflow-store"
 import type { WorkflowHistoryEntry } from "@/components/workflow-canvas/types"
 
+function defaultNodeFailureMessage(nodeType?: string) {
+  switch (nodeType) {
+    case "llm":
+      return "The AI response could not be generated. Please try again."
+    case "cropImage":
+      return "Image editing could not be completed. Please check the image and crop settings, then retry."
+    case "extractFrame":
+      return "Frame extraction failed. Please verify the video source and timestamp, then retry."
+    case "uploadImage":
+      return "Image upload failed. Please try uploading again."
+    case "uploadVideo":
+      return "Video upload failed. Please try uploading again."
+    default:
+      return "This step failed. Please try again."
+  }
+}
+
+function toFriendlyNodeError(nodeType: string | undefined, rawError: unknown) {
+  const message = typeof rawError === "string" ? rawError.trim() : ""
+  if (!message) return defaultNodeFailureMessage(nodeType)
+
+  const normalized = message.toLowerCase()
+
+  if (normalized.includes("non-empty video_url")) {
+    return "Please connect a video output to this node before running."
+  }
+
+  if (normalized.includes("non-empty image_url") || normalized.includes("imageurl is required")) {
+    return "Please provide an image source for this Crop Image node before running."
+  }
+
+  if (normalized.includes("connected image input") && normalized.includes("no valid image")) {
+    return "No valid image reached this LLM node. Fix the upstream image nodes or connection and run again."
+  }
+
+  if (normalized.includes("timed out") || normalized.includes("timeout")) {
+    return "This step took too long to finish. Please try again."
+  }
+
+  if (normalized.includes("quota") || normalized.includes("429") || normalized.includes("rate limit")) {
+    return "The AI service is busy right now. Please wait a moment and retry."
+  }
+
+  if (normalized.includes("credentials are missing") || normalized.includes("api_key") || normalized.includes("not set")) {
+    return "A required API key is missing in project settings. Please contact the workspace owner."
+  }
+
+  if (normalized.includes("transloadit") || normalized.includes("assembly")) {
+    return "Media processing is temporarily unavailable. Please retry in a moment."
+  }
+
+  if (normalized.includes("upstream dependency failed")) {
+    return "This step depends on an upstream node that failed. Fix upstream errors and run again."
+  }
+
+  if (
+    normalized.includes("unable to fetch output") ||
+    normalized.includes("crop task failed") ||
+    normalized.includes("extract frame task failed") ||
+    normalized.includes("node execution failed")
+  ) {
+    return defaultNodeFailureMessage(nodeType)
+  }
+
+  return defaultNodeFailureMessage(nodeType)
+}
+
 export function useExecution(workflowId: string) {
   const pollRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -71,16 +138,38 @@ export function useExecution(workflowId: string) {
             const run = pollData.run ?? pollData
             const nodeRuns = run?.nodeRuns ?? []
 
-            const runningIds = nodeRuns.filter((nr: any) => nr.status === "running").map((nr: any) => nr.nodeId)
+            const terminalNodeIds = new Set(
+              nodeRuns
+                .filter((nr: any) => nr.status === "success" || nr.status === "failed")
+                .map((nr: any) => String(nr.nodeId))
+            )
+
+            // Keep nodes visually running until they reach a terminal node status.
+            // This preserves the pulse for quick/queued nodes like text and uploads.
+            const activeNodeIds = nodesToRun.filter((nodeId) => !terminalNodeIds.has(nodeId))
             setRunningNodes(nodesToRun, false)
-            if (runningIds.length > 0) setRunningNodes(runningIds, true)
+            if (activeNodeIds.length > 0) setRunningNodes(activeNodeIds, true)
 
             for (const nodeRun of nodeRuns) {
+              const node = nodes.find((n) => n.id === nodeRun.nodeId)
+
               if (nodeRun.status === "failed") {
-                updateNodeData(nodeRun.nodeId, {
+                const failureMessage = toFriendlyNodeError(node?.type, nodeRun.error)
+
+                const updates: Record<string, unknown> = {
                   execution: "failed",
-                  errorMessage: "Unable to fetch output",
-                } as any)
+                  errorMessage: failureMessage,
+                }
+
+                if (node?.type === "llm") {
+                  updates.outputText = undefined
+                } else if (node?.type === "cropImage") {
+                  updates.croppedUrl = undefined
+                } else if (node?.type === "extractFrame") {
+                  updates.frameUrl = undefined
+                }
+
+                updateNodeData(nodeRun.nodeId, updates as any)
                 continue
               }
 
@@ -91,7 +180,6 @@ export function useExecution(workflowId: string) {
                   errorMessage: undefined,
                 }
 
-                const node = nodes.find((n) => n.id === nodeRun.nodeId)
                 if (node?.type === "llm") {
                   updates.outputText = typeof outputValue === "string" ? outputValue : nodeRun.outputPreview
                 } else if (node?.type === "cropImage" && typeof outputValue === "string") {
@@ -105,6 +193,18 @@ export function useExecution(workflowId: string) {
             }
 
             if (run?.status === "success" || run?.status === "failed" || run?.status === "partial") {
+              if (run.status === "failed" || run.status === "partial") {
+                const reportedNodeIds = new Set(nodeRuns.map((nr: any) => String(nr.nodeId)))
+                const missingNodeIds = nodesToRun.filter((nodeId) => !reportedNodeIds.has(nodeId))
+
+                for (const missingNodeId of missingNodeIds) {
+                  updateNodeData(missingNodeId, {
+                    execution: "failed",
+                    errorMessage: "This step did not complete because the workflow run ended early. Please retry.",
+                  } as any)
+                }
+              }
+
               if (pollRef.current) {
                 clearInterval(pollRef.current)
                 pollRef.current = null

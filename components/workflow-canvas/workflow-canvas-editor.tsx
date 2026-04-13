@@ -162,9 +162,18 @@ export function WorkflowCanvasEditor({ workflowId }: { workflowId: string }) {
   const previousToolRef = useRef<ToolMode | null>(null)
   const spacePanRef = useRef(false)
   const profileMenuRef = useRef<HTMLDivElement | null>(null)
+  const hasLocalCanvasChangesRef = useRef(false)
 
   const canvasBg = canvasMode === "light" ? "#f0f0f0" : "#0d0d0d"
   const { startExecution } = useExecution(workflowId)
+
+  const markCanvasDirty = useCallback(() => {
+    hasLocalCanvasChangesRef.current = true
+  }, [])
+
+  useEffect(() => {
+    hasLocalCanvasChangesRef.current = false
+  }, [workflowId])
 
   useEffect(() => {
     setWorkflowNameDraft(workflowName)
@@ -214,10 +223,11 @@ export function WorkflowCanvasEditor({ workflowId }: { workflowId: string }) {
         y: rect.top + (rect.height ?? 0) / 2,
       }
       const pos = reactFlowInstance.screenToFlowPosition(center)
+      markCanvasDirty()
       commitSnapshot()
       addNode(kind, pos)
     },
-    [reactFlowInstance, addNode, commitSnapshot]
+    [reactFlowInstance, addNode, commitSnapshot, markCanvasDirty]
   )
 
   const loadSampleWorkflow = useCallback(() => {
@@ -419,12 +429,25 @@ export function WorkflowCanvasEditor({ workflowId }: { workflowId: string }) {
         sourceHandle: "output",
         targetHandle: "images",
       },
+      {
+        source: "8a35bd60-d634-456b-ac7c-93b2592449a5",
+        sourceHandle: "output",
+        target: "d6c11e8f-5d77-4d04-be42-3532bf72c5bc",
+        targetHandle: "images",
+        id: "ec63bc4a-cb4d-4a4a-bd44-3f5c7798d8d9",
+        type: "workflow",
+        animated: false,
+        style: { stroke: "#3b82f6", strokeWidth: 2 },
+        markerEnd: { type: MarkerType.ArrowClosed, color: "#3b82f6" },
+        data: { typeTag: "image" },
+      },
     ]
 
+    markCanvasDirty()
     commitSnapshot()
     replaceCanvas(nodesToAdd, edgesToAdd)
     setEmptyOverlayDismissed(true)
-  }, [commitSnapshot, replaceCanvas])
+  }, [commitSnapshot, replaceCanvas, markCanvasDirty])
 
   const loadSimpleCaptionPreset = useCallback(() => {
     const nodesToAdd: Node<WorkflowNodeData>[] = [
@@ -480,10 +503,11 @@ export function WorkflowCanvasEditor({ workflowId }: { workflowId: string }) {
       },
     ]
 
+    markCanvasDirty()
     commitSnapshot()
     replaceCanvas(nodesToAdd, edgesToAdd)
     setEmptyOverlayDismissed(true)
-  }, [commitSnapshot, replaceCanvas])
+  }, [commitSnapshot, replaceCanvas, markCanvasDirty])
 
   const loadQuickMathPreset = useCallback(() => {
     const nodesToAdd: Node<WorkflowNodeData>[] = [
@@ -524,10 +548,11 @@ export function WorkflowCanvasEditor({ workflowId }: { workflowId: string }) {
       },
     ]
 
+    markCanvasDirty()
     commitSnapshot()
     replaceCanvas(nodesToAdd, edgesToAdd)
     setEmptyOverlayDismissed(true)
-  }, [commitSnapshot, replaceCanvas])
+  }, [commitSnapshot, replaceCanvas, markCanvasDirty])
 
 
   useEffect(() => {
@@ -536,9 +561,23 @@ export function WorkflowCanvasEditor({ workflowId }: { workflowId: string }) {
     const raw = typeof window !== "undefined" ? window.localStorage.getItem(key) : null
     if (!raw) return
     try {
-      const parsed = JSON.parse(raw) as { nodes: Node<WorkflowNodeData>[]; edges: Edge<any>[]; canvasMode?: CanvasMode }
-      if (parsed.nodes && parsed.edges) {
+      const parsed = JSON.parse(raw) as {
+        nodes?: Node<WorkflowNodeData>[]
+        edges?: Edge<any>[]
+        canvasMode?: CanvasMode
+        name?: string
+      }
+
+      const savedName = typeof parsed.name === "string" ? parsed.name.trim() : ""
+      if (savedName) {
+        setWorkflowName(savedName)
+      }
+
+      if (Array.isArray(parsed.nodes) && Array.isArray(parsed.edges)) {
         setNodesEdges(parsed.nodes, parsed.edges)
+        if (parsed.nodes.length > 0 || parsed.edges.length > 0) {
+          hasLocalCanvasChangesRef.current = true
+        }
         setEmptyOverlayDismissed(parsed.nodes.length > 0)
       }
     } catch {
@@ -583,14 +622,23 @@ export function WorkflowCanvasEditor({ workflowId }: { workflowId: string }) {
 
   // Load workflow from server API
   useEffect(() => {
+    let cancelled = false
+
     const loadWorkflow = async () => {
       try {
         const response = await fetch(`/api/workflows/${workflowId}`)
         if (!response.ok) return
         const { workflow } = await response.json()
-        if (workflow?.nodes && workflow?.edges) {
-          setNodesEdges(workflow.nodes, workflow.edges)
+        if (cancelled) return
+
+        if (typeof workflow?.name === "string") {
           setWorkflowName(workflow.name || "Untitled")
+        }
+
+        if (hasLocalCanvasChangesRef.current) return
+
+        if (Array.isArray(workflow?.nodes) && Array.isArray(workflow?.edges)) {
+          setNodesEdges(workflow.nodes, workflow.edges)
           setEmptyOverlayDismissed(workflow.nodes.length > 0)
         }
       } catch (error) {
@@ -600,6 +648,10 @@ export function WorkflowCanvasEditor({ workflowId }: { workflowId: string }) {
 
     if (workflowId) {
       loadWorkflow()
+    }
+
+    return () => {
+      cancelled = true
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workflowId])
@@ -611,6 +663,7 @@ export function WorkflowCanvasEditor({ workflowId }: { workflowId: string }) {
       nodes,
       edges,
       canvasMode,
+      name: nameToSave,
     }
     window.localStorage.setItem(key, JSON.stringify(payload))
 
@@ -661,6 +714,7 @@ export function WorkflowCanvasEditor({ workflowId }: { workflowId: string }) {
         try {
           const parsed = JSON.parse(String(event.target?.result ?? "{}"))
           if (Array.isArray(parsed.nodes) && Array.isArray(parsed.edges)) {
+            markCanvasDirty()
             commitSnapshot()
             replaceCanvas(parsed.nodes, parsed.edges)
           }
@@ -674,7 +728,7 @@ export function WorkflowCanvasEditor({ workflowId }: { workflowId: string }) {
       reader.readAsText(file)
       e.target.value = ""
     },
-    [commitSnapshot, replaceCanvas, setWorkflowName],
+    [commitSnapshot, replaceCanvas, setWorkflowName, markCanvasDirty],
   )
 
   // Auto-save workflow to API every 3 seconds after changes.
@@ -695,12 +749,14 @@ export function WorkflowCanvasEditor({ workflowId }: { workflowId: string }) {
     const t = window.setTimeout(() => {
       try {
         const key = `workflow-canvas:${workflowId}`
+        const nameToSave = workflowName.trim() || "Untitled"
         window.localStorage.setItem(
           key,
           JSON.stringify({
             nodes,
             edges,
             canvasMode,
+            name: nameToSave,
           })
         )
       } catch {
@@ -708,7 +764,7 @@ export function WorkflowCanvasEditor({ workflowId }: { workflowId: string }) {
       }
     }, 500)
     return () => window.clearTimeout(t)
-  }, [workflowId, nodes, edges, canvasMode])
+  }, [workflowId, nodes, edges, canvasMode, workflowName])
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -763,6 +819,7 @@ export function WorkflowCanvasEditor({ workflowId }: { workflowId: string }) {
 
       if (e.key === "Backspace" || e.key === "Delete") {
         if (selectedNodeIds.length === 0) return
+        markCanvasDirty()
         commitSnapshot()
         for (const nodeId of selectedNodeIds) removeNode(nodeId)
       }
@@ -794,6 +851,7 @@ export function WorkflowCanvasEditor({ workflowId }: { workflowId: string }) {
     setSelectedNodeIds,
     setToolMode,
     setWorkflowName,
+    markCanvasDirty,
     toolMode,
     undo,
     workflowNameDraft,
@@ -881,6 +939,7 @@ export function WorkflowCanvasEditor({ workflowId }: { workflowId: string }) {
         return
       }
 
+      markCanvasDirty()
       commitSnapshot()
       const created = addEdge(
         {
@@ -897,7 +956,7 @@ export function WorkflowCanvasEditor({ workflowId }: { workflowId: string }) {
       setNodesEdges(nodes as any, created as any)
       updateNodeData(targetId, { [`${targetHandleId}Connected`]: true } as any)
     },
-    [commitSnapshot, edges, flashInvalid, nodes, setNodesEdges, updateNodeData]
+    [commitSnapshot, edges, flashInvalid, nodes, setNodesEdges, updateNodeData, markCanvasDirty]
   )
 
   const onConnectStart = useCallback(() => {
@@ -956,13 +1015,14 @@ export function WorkflowCanvasEditor({ workflowId }: { workflowId: string }) {
     (_e: any, edge: Edge<any>) => {
       if (toolMode !== "cut") return
       eStopPropagation(_e)
+      markCanvasDirty()
       commitSnapshot()
       if (edge.target && edge.targetHandle) {
         updateNodeData(edge.target, { [`${edge.targetHandle}Connected`]: false } as any)
       }
       removeEdge(edge.id)
     },
-    [commitSnapshot, removeEdge, toolMode, updateNodeData]
+    [commitSnapshot, removeEdge, toolMode, updateNodeData, markCanvasDirty]
   )
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1007,10 +1067,11 @@ export function WorkflowCanvasEditor({ workflowId }: { workflowId: string }) {
       if (!kind) return
       if (!reactFlowInstance || !flowWrapperRef.current) return
       const pos = reactFlowInstance.screenToFlowPosition({ x: e.clientX, y: e.clientY })
+      markCanvasDirty()
       commitSnapshot()
       addNode(kind as NodeKind, pos)
     },
-    [addNode, commitSnapshot, reactFlowInstance]
+    [addNode, commitSnapshot, reactFlowInstance, markCanvasDirty]
   )
 
   const onSelectionChange = useCallback(
@@ -1649,6 +1710,8 @@ export function WorkflowCanvasEditor({ workflowId }: { workflowId: string }) {
             } ${
               canvasMode === "light" ? "bg-white border-l border-gray-200 shadow-lg" : "bg-[#111] border-l border-[#222]"
             }`}
+            onWheelCapture={(event) => event.stopPropagation()}
+            onTouchMoveCapture={(event) => event.stopPropagation()}
           >
             <div className={`p-4 flex items-center gap-3 ${canvasMode === "light" ? "border-b border-gray-200" : "border-b border-[#222]"}`}>
               <div className={`${canvasMode === "light" ? "text-gray-900" : "text-white"} font-medium`}>Workflow History</div>
@@ -1664,7 +1727,10 @@ export function WorkflowCanvasEditor({ workflowId }: { workflowId: string }) {
               </button>
             </div>
 
-            <div className={`p-3 overflow-y-auto h-[calc(100%-56px)] ${canvasMode === "light" ? "light-sidebar-scrollbar" : "dark-sidebar-scrollbar"}`}>
+            <div
+              className={`p-3 overflow-y-auto overscroll-contain h-[calc(100%-56px)] ${canvasMode === "light" ? "light-sidebar-scrollbar" : "dark-sidebar-scrollbar"}`}
+              style={{ scrollbarGutter: "stable" }}
+            >
               {history.length === 0 ? (
                 <div className={`text-sm mt-10 text-center ${canvasMode === "light" ? "text-gray-500" : "text-[#777]"}`}>
                   <div className={`${canvasMode === "light" ? "text-gray-900" : "text-white"} font-medium mb-2`}>No runs yet.</div>
@@ -1846,6 +1912,7 @@ export function WorkflowCanvasEditor({ workflowId }: { workflowId: string }) {
                     type="button"
                     className={`${canvasMode === "light" ? "bg-gray-50 border border-gray-200 hover:bg-gray-100" : "bg-[#0f0f10] border border-[#222] hover:bg-[#161616]"} rounded-2xl h-55 transition-colors cursor-pointer`}
                     onClick={() => {
+                      markCanvasDirty()
                       commitSnapshot()
                       replaceCanvas([], [])
                       setPresetModalOpen(false)

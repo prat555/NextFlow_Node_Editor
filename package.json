@@ -43,7 +43,7 @@
     "@radix-ui/react-toggle": "1.1.10",
     "@radix-ui/react-toggle-group": "1.1.11",
     "@radix-ui/react-tooltip": "1.2.8",
-    "@trigger.dev/sdk": "4.4.3",
+    "@trigger.dev/sdk": "4.4.4",
     "@uppy/core": "^5.2.0",
     "@uppy/react": "^5.2.0",
     "@uppy/transloadit": "^5.5.1",
@@ -76,7 +76,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.0",
-    "@trigger.dev/build": "4.4.3",
+    "@trigger.dev/build": "4.4.4",
     "@types/node": "^22",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
