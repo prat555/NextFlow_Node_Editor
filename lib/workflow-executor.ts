@@ -147,6 +147,8 @@ export async function executeWorkflow(input: ExecuteWorkflowInput): Promise<Exec
   const nodeDetails: ExecuteWorkflowOutput["nodeDetails"] = []
 
   for (const phase of phases) {
+    // Safe to parallelize here: not inside a Trigger.dev task
+    // Trigger.dev constraint only applies when wrapping task waits in Promise.all
     await Promise.all(
       phase.map(async (nodeId) => {
         const node = nodesById.get(nodeId)

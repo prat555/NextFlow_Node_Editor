@@ -27,6 +27,9 @@ export const cropImageTask = task({
   const width = Math.max(1, Math.min(100, payload.widthPercent))
   const height = Math.max(1, Math.min(100, payload.heightPercent))
 
+  const x2 = Math.min(x + width, 100);
+  const y2 = Math.min(y + height, 100);
+
   const steps = {
   import: {
     robot: "/http/import",
@@ -37,10 +40,10 @@ export const cropImageTask = task({
     use: "import",
     resize_strategy: "crop",
     crop: {
-      x1: `${x}p`,
-      y1: `${y}p`,
-      x2: `${x + width}p`,   
-      y2: `${y + height}p`, 
+      x1: `${x}%`,
+      y1: `${y}%`,
+      x2: `${x2}%`,
+      y2: `${y2}%`,
     },
     format: "jpg",
   },

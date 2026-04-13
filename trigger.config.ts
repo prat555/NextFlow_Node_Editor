@@ -1,3 +1,4 @@
+import { ffmpeg } from "@trigger.dev/build/extensions/core"
 import { prismaExtension } from "@trigger.dev/build/extensions/prisma"
 import { defineConfig } from "@trigger.dev/sdk"
 
@@ -13,6 +14,7 @@ export default defineConfig({
         mode: "legacy",
         schema: "prisma/schema.prisma",
       }),
+      ffmpeg({ version: "7" }),
     ],
   },
 });

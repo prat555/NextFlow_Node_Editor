@@ -617,15 +617,7 @@ export function CropImageNode(props: NodeProps) {
           style={{ top: "81%", background: invalidFlash?.targetNodeId === id && invalidFlash?.targetHandleId === "height_percent" ? "#ef4444" : "#888", width: 8, height: 8, border: "2px solid #0a0a0a" }}
         />
 
-        <div className="space-y-1">
-          <div className="text-[#888] text-xs pl-2">image_url</div>
-          <div className="text-[#888] text-xs pl-2">x_percent</div>
-          <div className="text-[#888] text-xs pl-2">y_percent</div>
-          <div className="text-[#888] text-xs pl-2">width_percent</div>
-          <div className="text-[#888] text-xs pl-2">height_percent</div>
-        </div>
-
-        <InputField connected={connectedImageUrl} label="image_url">
+        <InputField connected={connectedImageUrl} label="Image">
           <UploadArea
             accept="image/*"
             kind="image"
@@ -637,7 +629,7 @@ export function CropImageNode(props: NodeProps) {
         </InputField>
 
         <div className="grid grid-cols-2 gap-2">
-          <InputField connected={connectedX} label="x_percent">
+          <InputField connected={connectedX} label="Left (%)">
             <input
               type="number"
               disabled={connectedX}
@@ -645,12 +637,12 @@ export function CropImageNode(props: NodeProps) {
               onChange={(e) => updateNodeData(id, { x_percent: Number(e.target.value) } as any)}
               className={
                 canvasMode === "light"
-                  ? "w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-black outline-none disabled:opacity-50"
-                  : "w-full bg-[#0f0f10] border border-[#2a2a2c] rounded-xl p-3 text-sm text-white outline-none disabled:opacity-50"
+                  ? "w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-black outline-none disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  : "w-full bg-[#0f0f10] border border-[#2a2a2c] rounded-xl p-3 text-sm text-white outline-none disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               }
             />
           </InputField>
-          <InputField connected={connectedY} label="y_percent">
+          <InputField connected={connectedY} label="Top (%)">
             <input
               type="number"
               disabled={connectedY}
@@ -658,12 +650,12 @@ export function CropImageNode(props: NodeProps) {
               onChange={(e) => updateNodeData(id, { y_percent: Number(e.target.value) } as any)}
               className={
                 canvasMode === "light"
-                  ? "w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-black outline-none disabled:opacity-50"
-                  : "w-full bg-[#0f0f10] border border-[#2a2a2c] rounded-xl p-3 text-sm text-white outline-none disabled:opacity-50"
+                  ? "w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-black outline-none disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  : "w-full bg-[#0f0f10] border border-[#2a2a2c] rounded-xl p-3 text-sm text-white outline-none disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               }
             />
           </InputField>
-          <InputField connected={connectedW} label="width_percent">
+          <InputField connected={connectedW} label="Width (%)">
             <input
               type="number"
               disabled={connectedW}
@@ -671,12 +663,12 @@ export function CropImageNode(props: NodeProps) {
               onChange={(e) => updateNodeData(id, { width_percent: Number(e.target.value) } as any)}
               className={
                 canvasMode === "light"
-                  ? "w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-black outline-none disabled:opacity-50"
-                  : "w-full bg-[#0f0f10] border border-[#2a2a2c] rounded-xl p-3 text-sm text-white outline-none disabled:opacity-50"
+                  ? "w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-black outline-none disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  : "w-full bg-[#0f0f10] border border-[#2a2a2c] rounded-xl p-3 text-sm text-white outline-none disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               }
             />
           </InputField>
-          <InputField connected={connectedH} label="height_percent">
+          <InputField connected={connectedH} label="Height (%)">
             <input
               type="number"
               disabled={connectedH}
@@ -684,8 +676,8 @@ export function CropImageNode(props: NodeProps) {
               onChange={(e) => updateNodeData(id, { height_percent: Number(e.target.value) } as any)}
               className={
                 canvasMode === "light"
-                  ? "w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-black outline-none disabled:opacity-50"
-                  : "w-full bg-[#0f0f10] border border-[#2a2a2c] rounded-xl p-3 text-sm text-white outline-none disabled:opacity-50"
+                  ? "w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-black outline-none disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  : "w-full bg-[#0f0f10] border border-[#2a2a2c] rounded-xl p-3 text-sm text-white outline-none disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               }
             />
           </InputField>
@@ -696,6 +688,16 @@ export function CropImageNode(props: NodeProps) {
             <p className="text-[#888] text-xs mb-1">Cropped Result</p>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={data.croppedUrl} alt="cropped" className="w-full rounded-lg max-h-[120px] object-cover" />
+          </div>
+        ) : null}
+
+        {data.errorMessage ? (
+          <div className="mt-2 p-3 bg-red-950/30 rounded-xl border border-red-900/50">
+            <div className="flex items-center gap-1.5 mb-1">
+              <X className="w-3 h-3 text-red-400" />
+              <span className="text-red-400 text-xs">Error</span>
+            </div>
+            <p className="text-red-300 text-xs">{data.errorMessage}</p>
           </div>
         ) : null}
       </div>
@@ -733,18 +735,18 @@ export function ExtractFrameNode(props: NodeProps) {
           style={{ top: "65%", background: invalidFlash?.targetNodeId === id && invalidFlash?.targetHandleId === "timestamp" ? "#ef4444" : "#888", width: 8, height: 8, border: "2px solid #0a0a0a" }}
         />
 
-        <div className="space-y-1">
-          <div className="text-[#888] text-xs pl-2">video_url</div>
-          <div className="text-[#888] text-xs pl-2">timestamp</div>
-        </div>
+        <InputField connected={connectedVideoUrl} label="Video">
+          <UploadArea
+            accept=".mp4,.mov,.webm,.m4v"
+            kind="video"
+            preview={data.kind === "extractFrame" ? data.videoUrl : undefined}
+            onFile={(url) => updateNodeData(id, { videoUrl: url } as any)}
+            onClear={() => updateNodeData(id, { videoUrl: undefined } as any)}
+            disabled={connectedVideoUrl}
+          />
+        </InputField>
 
-        <div className="flex items-center gap-2 min-h-6">
-          <span className="text-xs text-[#888]">video_url</span>
-          {connectedVideoUrl ? <span className="text-xs text-blue-400">Receiving input</span> : null}
-        </div>
-
-        <div className="space-y-1">
-          <label className="text-xs text-[#888]">timestamp</label>
+        <InputField connected={connectedTimestamp} label="Time (e.g. 30 or 50%)">
           <input
             type="text"
             disabled={connectedTimestamp}
@@ -753,21 +755,33 @@ export function ExtractFrameNode(props: NodeProps) {
             placeholder="e.g. 30 or 50%"
             className={
               canvasMode === "light"
-                ? `w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-black outline-none ${
-                    connectedTimestamp ? "opacity-40 cursor-not-allowed" : ""
-                  }`
-                : `w-full bg-[#0d0d0d] border border-[#333] rounded-lg px-3 py-2 text-sm text-white outline-none ${
-                    connectedTimestamp ? "opacity-40 cursor-not-allowed" : ""
-                  }`
+                ? "w-full bg-white border border-gray-200 rounded-xl p-3 text-sm text-black outline-none disabled:opacity-50"
+                : "w-full bg-[#0f0f10] border border-[#2a2a2c] rounded-xl p-3 text-sm text-white outline-none disabled:opacity-50"
             }
           />
-        </div>
+        </InputField>
 
         {data.kind === "extractFrame" && data.frameUrl ? (
           <div className="mt-2">
             <p className="text-[#888] text-xs mb-1">Extracted Frame</p>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={data.frameUrl} alt="frame" className="w-full rounded-lg max-h-[120px] object-cover" />
+          </div>
+        ) : null}
+
+        {data.errorMessage ? (
+          <div
+            className={
+              canvasMode === "light"
+                ? "mt-2 p-3 rounded-xl border border-red-200 bg-red-50"
+                : "mt-2 p-3 bg-red-950/30 rounded-xl border border-red-900/50"
+            }
+          >
+            <div className="flex items-center gap-1.5 mb-1">
+              <X className={canvasMode === "light" ? "w-3 h-3 text-red-700" : "w-3 h-3 text-red-400"} />
+              <span className={canvasMode === "light" ? "text-red-700 text-xs font-medium" : "text-red-400 text-xs"}>Error</span>
+            </div>
+            <p className={canvasMode === "light" ? "text-red-700 text-xs" : "text-red-300 text-xs"}>{data.errorMessage}</p>
           </div>
         ) : null}
       </div>

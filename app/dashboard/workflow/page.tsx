@@ -9,6 +9,7 @@ import {
   DialogTitle,
   DialogFooter,
   DialogClose,
+  DialogDescription,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import {
@@ -150,6 +151,7 @@ export default function WorkflowProjectsPage() {
           {/* New Workflow button */}
           <Link
             href="/dashboard/workflow/new"
+            prefetch={false}
             className="inline-flex items-center gap-2 bg-white text-black rounded-full px-6 py-2.5 text-sm font-medium hover:bg-gray-100 transition-colors"
           >
             New Workflow
@@ -208,7 +210,7 @@ export default function WorkflowProjectsPage() {
           /* Projects Grid */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* New Workflow Card */}
-            <Link href="/dashboard/workflow/new" className="block">
+            <Link href="/dashboard/workflow/new" prefetch={false} className="block">
               <div className="bg-[#1a1a1a] rounded-2xl aspect-4/3 flex items-center justify-center hover:bg-[#222] transition-colors">
                 <div className="w-16 h-16 rounded-full border border-white/60 flex items-center justify-center">
                   <Plus className="w-7 h-7 text-white" />
@@ -323,33 +325,16 @@ export default function WorkflowProjectsPage() {
         ) : loading ? (
           <div className="flex items-center justify-center py-24 text-[#888] text-sm">Loading workflows...</div>
         ) : (
-          /* Empty State */
-          <div className="flex flex-col items-center justify-center py-24">
-            <div className="bg-[#3b82f6] rounded-xl p-3 mb-4">
-              <GitBranch className="w-8 h-8 text-white" />
-            </div>
-
-            <h2 className="text-white text-xl font-semibold mb-2">No Workflows Yet</h2>
-
-            <p className="text-[#888] text-sm text-center max-w-[320px] leading-relaxed mb-6">
-              You haven&apos;t created any workflows yet.
-              <br />
-              Get started by creating your first one.
-            </p>
-
-            <Link
-              href="/dashboard/workflow/new"
-              className="bg-white text-black rounded-full px-6 py-2.5 font-medium hover:bg-gray-100 transition-colors mb-4"
-            >
-              New Workflow
+          /* Empty State - Just show New Workflow Card */
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Link href="/dashboard/workflow/new" prefetch={false} className="block">
+              <div className="bg-[#1a1a1a] rounded-2xl aspect-4/3 flex items-center justify-center hover:bg-[#222] transition-colors">
+                <div className="w-16 h-16 rounded-full border border-white/60 flex items-center justify-center">
+                  <Plus className="w-7 h-7 text-white" />
+                </div>
+              </div>
+              <p className="text-white text-sm font-medium mt-2">New Workflow</p>
             </Link>
-
-            <a
-              href="#"
-              className="flex items-center gap-1 text-[#888] text-sm hover:text-white transition-colors"
-            >
-              Learn More <ArrowUpRight className="w-3 h-3" />
-            </a>
           </div>
         )}
       </div>
@@ -364,11 +349,10 @@ export default function WorkflowProjectsPage() {
                 </>
               ) : null}
             </DialogTitle>
+            <DialogDescription className="text-base text-gray-300 pt-3">
+              This workflow will be permanently deleted. This action cannot be undone.
+            </DialogDescription>
           </DialogHeader>
-          <div className="py-3 text-base text-gray-300">
-            This workflow will be permanently deleted. <br />
-            <span className="text-gray-400 text-sm">You can’t undo this action.</span>
-          </div>
           <DialogFooter>
             <DialogClose asChild>
               <Button
@@ -405,8 +389,11 @@ export default function WorkflowProjectsPage() {
                 </>
               ) : null}
             </DialogTitle>
+            <DialogDescription className="text-base text-gray-300 pt-3">
+              Enter a new name for your workflow below.
+            </DialogDescription>
           </DialogHeader>
-          <div className="py-3 text-base text-gray-300">
+          <div className="py-3">
             <input
               type="text"
               value={renameValue}

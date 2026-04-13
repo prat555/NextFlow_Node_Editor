@@ -11,7 +11,7 @@ interface MarkdownOutputProps {
 export function MarkdownOutput({ content, canvasMode }: MarkdownOutputProps) {
   return (
     <div
-      className={`max-h-[300px] overflow-y-auto rounded-lg p-3 text-xs leading-relaxed ${
+      className={`max-h-75 overflow-y-auto rounded-lg p-3 text-xs leading-relaxed ${
         canvasMode === "light"
           ? "bg-gray-50 text-gray-700 border border-gray-200"
           : "bg-[#0a0a0a] text-[#aaa] border border-[#1a1a1a]"
@@ -19,6 +19,7 @@ export function MarkdownOutput({ content, canvasMode }: MarkdownOutputProps) {
       style={{
         scrollbarWidth: "thin",
         scrollbarColor: canvasMode === "light" ? "#d1d5db #f3f4f6" : "#333 #0f0f10",
+        scrollbarGutter: "stable",
       }}
     >
       <ReactMarkdown
